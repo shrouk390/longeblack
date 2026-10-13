@@ -1,0 +1,384 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>[hidden]{display:none!important}body{margin:0}</style></head><body><title>The Maison Launch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: a private-appointment look. One decision per screen on a black card, thin gold rules, serif display over a clean sans body.
+   Single committed look: black, gold, warm white. */
+:root{
+  --bg:#070707; --card:#101010; --card2:#171614; --ink:#f6f1e6; --muted:#a8a08d; --line:#2c2923;
+  --gold:#c9a24b; --gold-hi:#e8cb7e; --gold-lo:#8d6d24; --gold-ink:#0a0a0a; --ok:#a9d8b4; --bad:#e58a80;
+  --f-disp:'Cormorant Garamond','Times New Roman',serif; --f-body:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 56px}
+#app{max-width:660px;margin:0 auto;min-width:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--gold-hi);outline-offset:3px}
+.disp{font-family:var(--f-disp);font-weight:600;line-height:1.08;letter-spacing:.005em;text-wrap:balance;margin:0}
+.lbl{font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+.sub{color:var(--muted)}
+p{margin:0}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 0}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-bottom:10px}
+.mark{font-family:var(--f-disp);font-size:20px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-hi)}
+.stats{display:flex;gap:16px;align-items:baseline;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.stats b{font-family:var(--f-disp);font-size:24px;letter-spacing:0;color:var(--ink);font-variant-numeric:tabular-nums;font-weight:700;margin-left:4px}
+.prog{height:2px;background:var(--line);position:relative}
+.prog i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi))}
+.acts{display:flex;justify-content:space-between;padding-top:6px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.acts span.on{color:var(--gold-hi)}
+
+.card{margin-top:18px;background:var(--card);border:1px solid var(--line);padding:30px 24px 28px;display:grid;gap:22px;position:relative}
+.card::before{content:"";position:absolute;inset:6px;border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);pointer-events:none}
+.card>*{position:relative}
+.orn{display:flex;align-items:center;gap:12px;color:var(--gold)}
+.orn::before,.orn::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--gold-lo))}
+.orn::after{background:linear-gradient(270deg,transparent,var(--gold-lo))}
+.orn i{width:7px;height:7px;background:var(--gold);transform:rotate(45deg)}
+h1.disp{font-size:clamp(34px,8vw,52px)}
+h2.disp{font-size:clamp(26px,5.5vw,34px)}
+.q{font-size:18px;font-weight:500}
+.clue{border-left:2px solid var(--gold);padding:10px 16px;background:var(--card2);font-family:var(--f-disp);font-size:22px;font-style:italic;font-weight:500;line-height:1.3}
+.rem{background:var(--card2);border:1px solid var(--line);padding:14px 16px;display:grid;gap:6px;font-size:14px}
+.rem b{color:var(--gold-hi)}
+.rem .lbl{margin-bottom:2px}
+
+.opts{display:grid;gap:10px}
+.opt{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;text-align:left;width:100%;background:transparent;border:1px solid var(--line);padding:13px 14px;min-width:0}
+.opt .k{font-family:var(--f-disp);font-size:20px;color:var(--gold);font-weight:700;line-height:1.2}
+.opt b{display:block;font-weight:700}
+.opt span.d{display:block;font-size:14px;color:var(--muted)}
+.opt:not([disabled]):hover{border-color:var(--gold);background:var(--card2)}
+.opt[disabled]{cursor:default}
+.opt.sel{border-color:var(--gold);background:var(--card2)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 9%,transparent)}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 9%,transparent)}
+.opt.ok .k{color:var(--ok)}.opt.bad .k{color:var(--bad)}
+
+.go{background:linear-gradient(180deg,var(--gold-hi),var(--gold));color:var(--gold-ink);border:0;font-weight:800;font-size:13px;letter-spacing:.2em;text-transform:uppercase;padding:15px 28px;justify-self:start}
+.go[disabled]{opacity:.35;cursor:not-allowed}
+.go:active{opacity:.85}
+.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold-hi);font-weight:800;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:12px 20px}
+.fb{border:1px solid var(--line);border-left:3px solid var(--gold);padding:14px 16px;display:grid;gap:4px;background:var(--card2)}
+.fb.ok{border-left-color:var(--ok)}.fb.bad{border-left-color:var(--bad)}
+.fb b.t{font-family:var(--f-disp);font-size:22px;font-weight:700}
+.fb.ok b.t{color:var(--ok)}.fb.bad b.t{color:var(--bad)}
+.fld{width:100%;font:inherit;color:var(--ink);background:#050505;border:1px solid var(--gold-lo);padding:13px 14px;font-size:17px}
+.fld::placeholder{color:#7c7566}
+
+.guest{display:grid;gap:10px;border:1px solid var(--line);padding:14px 14px 12px;background:var(--card2)}
+.guest .n{font-family:var(--f-disp);font-size:22px;font-weight:700;line-height:1.1}
+.guest .n small{font-family:var(--f-body);font-size:13px;color:var(--muted);font-weight:500;margin-left:6px}
+.guest p{font-size:15px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1 1 130px;background:transparent;border:1px solid var(--line);padding:9px 8px;font-size:13px;font-weight:700;min-width:0}
+.seg button.sel{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
+.seg button.ok{border-color:var(--ok);color:var(--ok);background:transparent}
+.seg button.bad{border-color:var(--bad);color:var(--bad);text-decoration:line-through;background:transparent}
+.seg button[disabled]{cursor:default}
+.gl{font-size:13px}
+
+table.sc{width:100%;border-collapse:collapse;font-size:14px}
+table.sc th,table.sc td{padding:10px 6px;border-bottom:1px solid var(--line);text-align:center}
+table.sc th:first-child,table.sc td:first-child{text-align:left}
+table.sc th{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.dots{letter-spacing:2px;color:var(--gold-hi);white-space:nowrap}
+.dots s{color:#4b463b;text-decoration:none}
+.tw{overflow-x:auto}
+
+.mapwrap{display:grid;gap:6px;max-width:460px;width:100%;margin-inline:auto}
+.cap{text-align:center;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em}
+.xcap{display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:700;color:var(--muted)}
+.map{position:relative;aspect-ratio:1;max-width:100%;background:#050505;border:1px solid var(--gold-lo);cursor:crosshair;touch-action:manipulation;overflow:hidden;
+ background-image:linear-gradient(#26231c 1px,transparent 1px),linear-gradient(90deg,#26231c 1px,transparent 1px);background-size:25% 25%}
+.map.lk{cursor:default}
+.map::before,.map::after{content:"";position:absolute;background:var(--gold-lo);opacity:.7}
+.map::before{left:50%;top:0;bottom:0;width:1px}.map::after{top:50%;left:0;right:0;height:1px}
+.dot{position:absolute;padding:3px 9px;background:var(--ink);color:#0a0a0a;font-size:12px;font-weight:800;white-space:nowrap;pointer-events:none;z-index:2;max-width:48%;overflow:hidden;text-overflow:ellipsis}
+.me{position:absolute;transform:translate(-50%,-50%);width:58px;height:58px;border:2px solid var(--gold-hi);border-radius:50%;display:grid;place-items:center;font-family:var(--f-disp);font-weight:700;font-size:13px;color:var(--gold-hi);background:color-mix(in srgb,var(--gold) 22%,transparent);pointer-events:none;z-index:3;text-align:center;line-height:1}
+.zone{position:absolute;border:2px dashed var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent);z-index:1;display:grid;place-items:start center;font-size:11px;font-weight:800;color:var(--gold-hi);text-align:center;letter-spacing:.1em;text-transform:uppercase;padding:4px}
+
+.blank{display:grid;gap:8px}
+.blank .lbl{color:var(--muted)}
+.stmt{border-left:2px solid var(--gold);padding:12px 16px;background:var(--card2);font-family:var(--f-disp);font-size:21px;line-height:1.35;font-style:italic;font-weight:500}
+.stmt b{color:var(--gold-hi);font-weight:600}
+.stmt .e{color:#6e6858}
+
+.big{font-family:var(--f-disp);font-size:clamp(64px,18vw,104px);font-weight:700;line-height:.9;color:var(--gold-hi);font-variant-numeric:tabular-nums}
+.big small{font-size:.3em;color:var(--muted);font-family:var(--f-body);font-weight:500;margin-left:4px}
+.bars{display:grid;gap:10px}
+.br{display:grid;grid-template-columns:104px 1fr 60px;gap:10px;align-items:center;font-size:13px;font-weight:700}
+.br div{height:6px;background:var(--line)}.br div i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi))}
+.br span:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.rv{display:grid;gap:8px}
+.rv p{font-size:14px;border-left:2px solid var(--line);padding-left:12px}
+.rv p b{color:var(--gold-hi)}
+.notice{border:1px solid var(--gold);padding:10px 14px;font-size:14px;color:var(--gold-hi)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+@media (max-width:480px){.card{padding:26px 16px 24px}.br{grid-template-columns:80px 1fr 52px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{flex:1 1 120px;background:transparent;border:1px solid var(--line);padding:10px 8px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;min-width:0}
+.tab.on{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
+.grid{display:grid;gap:12px}
+.gcard{display:grid;gap:7px;border:1px solid var(--line);padding:14px;background:var(--card2);min-width:0}
+.gcard>b{font-family:var(--f-disp);font-size:22px;font-weight:700;line-height:1.15}
+.gcard span{font-size:14px}
+.gcard.okc{border-color:var(--ok)}.gcard.badc{border-color:var(--bad)}
+.mem{display:grid;grid-template-columns:1fr 70px 22px;gap:8px;align-items:center;font-size:14px;border-top:1px solid var(--line);padding-top:7px}
+.mem small{display:block;font-size:12px;color:var(--muted)}
+.mem em{font-style:normal;font-weight:800;color:var(--gold-hi);text-align:right}
+.ib{display:block;height:6px;background:var(--line);min-width:0}.ib i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi))}
+.rs{display:grid;grid-template-columns:1fr 90px;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:8px}
+.rs small{display:block;font-size:13px;color:var(--muted);font-weight:400}
+.rs.you b{color:var(--gold-hi)}
+.q{font-size:18px;font-weight:500}
+</style>
+<div id="app"></div>
+<script>
+const KEY='ms1-maison-v2';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LIMIT=30*60;
+function fresh(){return{v:2,i:0,team:'',t0:null,ord:{},res:{},draft:{},lastSlot:-1}}
+let S=fresh();
+function save(){if(window.__reset)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(_){}}
+(function restore(){try{
+ if(location.hash==='#reset'){localStorage.removeItem(KEY);try{history.replaceState(null,'',location.pathname+location.search)}catch(_){}}
+ const raw=localStorage.getItem(KEY);
+ if(raw){const o=JSON.parse(raw);if(o&&o.v===2&&o.i>0){S=Object.assign(fresh(),o);S.restored=true}}
+}catch(_){}})();
+window.addEventListener('hashchange',()=>{if(location.hash==='#reset'){window.__reset=true;try{localStorage.removeItem(KEY)}catch(_){}location.replace(location.pathname+location.search)}});
+
+/* ---------- data ---------- */
+const VALS=['Loves heritage','Wants status','Always on the road'];
+const HABITS=['Loyal to one house','First luxury bag','Buys every season','Buys when needed','Buys gifts on trips'];
+const REG={Cairo:0,Dubai:0,Paris:1,London:1,Milan:1,Singapore:2};
+// name, city, age, values, habit, interest in Aurelle Voyage (1-10)
+const PROS=[['Amira','Cairo',52,0,0,3],['Julien','Paris',31,1,1,9],['Sofia','Milan',47,2,3,6],['Hassan','Dubai',34,0,0,2],['Mei','Singapore',29,1,1,8],['Omar','London',31,2,4,7],['Layla','Dubai',49,1,2,9],['Pierre','Paris',41,0,3,4],['Chen','Singapore',41,2,4,5],['Nour','Cairo',38,1,2,8],['Marco','Milan',62,0,0,3],['Ava','London',58,2,3,6]];
+const LENS=[
+ {n:'Where they live',g:['Middle East','Europe','Asia'],f:p=>REG[p[1]],theory:'geographic'},
+ {n:'How old they are',g:['Under 35','35 to 49','50 and over'],f:p=>p[2]<35?0:p[2]<50?1:2,theory:'demographic'},
+ {n:'What they value',g:VALS,f:p=>p[3],theory:'psychographic'},
+ {n:'How they buy',g:HABITS,f:p=>p[4],theory:'behavioural'}];
+function groupsOf(L){return L.g.map((nm,k)=>({nm,m:PROS.filter(p=>L.f(p)===k)})).filter(g=>g.m.length)}
+const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+function eta(L){const all=PROS.map(p=>p[5]),m=mean(all),sst=all.reduce((s,x)=>s+(x-m)**2,0);
+ const ssb=groupsOf(L).reduce((s,g)=>s+g.m.length*(mean(g.m.map(p=>p[5]))-m)**2,0);return ssb/sst}
+const ETA=LENS.map(eta);const EMIN=Math.min(...ETA),EMAX=Math.max(...ETA);
+const lensPts=i=>Math.round(12*(ETA[i]-EMIN)/(EMAX-EMIN));
+
+const CANDS=[
+ ['People who love beautiful things','The survey cannot tell who they are or how many there are.',false,'You cannot measure who "loves beautiful things", so you cannot size or find this group.'],
+ ['Forty billionaires who live in one small village','About 40 people in total.',false,'Forty people can never pay back a launch. The group is too small.'],
+ ['Rich people who never shop in stores, never go online and never see ads','No known way to reach them.',false,'If you cannot reach them, you cannot sell to them.'],
+ ['Status-seeking professionals in big cities','About 40,000 people, reachable through social media and Aurelle boutiques.',true,'Clear, reachable, big enough, and they respond differently from other buyers.'],
+ ['Frequent flyers who shop in airport stores','About 90,000 people, reachable through airport boutiques and travel retail.',true,'Clear, reachable, big enough, and they want something different: bags built for the road.']];
+
+const SEGS=[
+ {nm:'Rising Achievers',reach:'40,000',rivals:'Orsay & Co is cheap and trendy. Valmont feels old-fashioned to them.',fit:'Our modern design team matches what they want.',conv:.03},
+ {nm:'Frequent Travellers',reach:'90,000',rivals:'Three big luggage houses already fight hard for them.',fit:'They want airline-size features. We have never built them.',conv:.01},
+ {nm:'Heritage Collectors',reach:'50,000',rivals:'Valmont has served them for 150 years.',fit:'We are new. We have no history to show.',conv:.004}];
+const MARGIN=1500,CAMP=300000,CAP1=1200;
+const Y1=SEGS.map(s=>Math.min(CAP1,s.reach.replace(',','')*s.conv)*MARGIN-CAMP); // 1.5M,1.05M,0
+const M=n=>'€'+(n/1e6).toFixed(2).replace(/\.?0+$/,'')+'M';
+const PLAN2=[
+ {t:'Keep selling to Rising Achievers only, with the same bag',bags:1400,cost:CAMP},
+ {t:'Add a travel edition for Frequent Travellers, with its own campaign',bags:1400+900,cost:2*CAMP+200000},
+ {t:'Launch a separate offer for all three groups',bags:1400+900+200,cost:3*CAMP+400000},
+ {t:'Run one message for everybody and let people choose',bags:Math.round((1400+900+200)/4),cost:CAMP}];
+PLAN2.forEach(p=>{p.profit=p.bags*MARGIN-p.cost});
+const P2MAX=Math.max(...PLAN2.map(p=>p.profit));
+
+const RIVALS=[['Valmont',14,82],['Haute Noor',32,90],['Orsay & Co',82,28],['Kesto',26,24]];
+const ZONE={x1:55,y1:55,x2:98,y2:98};
+const CLAIMS=[
+ {t:'Great quality',riv:'All four',care:'58%',copy:'No',share:9,txt:'Every rival already says it, so customers hear nothing new.'},
+ {t:'Made with real leather',riv:'All four',care:'44%',copy:'No',share:7,txt:'It is expected in luxury. It gets you into the room but does not make people pick you.'},
+ {t:'Hand-stitched in Paris and repaired free for life',riv:'None',care:'41%',copy:'Yes, it needs a workshop',share:38,txt:'No rival says it, customers care, and it is hard to copy. This is a real reason to choose Aurelle.'},
+ {t:'The lowest price in luxury',riv:'Kesto',care:'30%',copy:'No, rivals can cut prices',share:11,txt:'Kesto already plays here and it would cheapen the brand.'}];
+const PRICES=[
+ {t:'€1,400',consider:72,lux:18,txt:'Many would consider it, but only 18 in 100 think it feels like real luxury. It looks like Orsay.'},
+ {t:'€3,200',consider:64,lux:78,txt:'Within what they said they would spend, and it still feels like real luxury.'},
+ {t:'€5,800',consider:22,lux:85,txt:'It feels luxurious, but it copies Valmont and most Achievers will not pay it.'},
+ {t:'€9,000',consider:4,lux:90,txt:'Only 4 in 100 would consider it. Almost nobody can afford it.'}];
+const SLOGANS=[
+ {t:'"Quality you can trust. For everyone."',pts:0,txt:'Everyone is not a target, and "quality" and "trust" are claims every rival makes.'},
+ {t:'"Hand-stitched in Paris. Repaired for life. For those who are going places."',pts:6,txt:'It names the real point of difference and speaks to the target.'},
+ {t:'"Luxury, now at a friendlier price."',pts:0,txt:'It breaks your own position. A friendlier price tells Achievers this is not real luxury.'}];
+const STMT=[
+ {lbl:'Who is it for?',pre:'To ',opts:['everyone who loves beautiful things','rising achievers aged 28 to 38 who want a modern bag that shows they have arrived','people who like to travel'],ok:1,pts:3,why:'A target is specific: who they are and what they need. "Everyone" and "people who travel" are too broad.'},
+ {lbl:'What is it?',pre:'Aurelle Voyage is ',opts:['a leather goods brand','a modern luxury travel bag','a high-end item'],ok:1,pts:3,why:'The concept says exactly what the product is. "Brand" and "item" say almost nothing.'},
+ {lbl:'Why choose it?',pre:'that ',opts:['is high quality and trusted by many','is hand-stitched in Paris and repaired free for life','uses only the finest materials'],ok:1,pts:4,why:'Use the point of difference you proved with the data. "Quality", "trusted" and "finest materials" are claims every rival makes.'}];
+
+const N=[
+ {id:'start',type:'start',act:0},
+ {id:'a1',type:'act',act:1,title:'Act I · Segment',kicker:'About 10 minutes',lead:'Who could buy Aurelle Voyage?',
+  brief:'<b>Your client:</b> Maison Aurelle, a small Paris house that makes leather goods. <b>The new product:</b> Aurelle Voyage, hand-stitched travel bags. <b>Your job:</b> decide who to sell to, and how Aurelle should be seen. Every choice you make changes the result.',
+  rem:['You will decide <b>how to split</b> a list of real prospects into groups.','Then you will decide <b>which groups are worth keeping</b>.']},
+ {id:'lens',type:'lens',act:1,pts:12,short:'Splitting the prospects by what they value or how they buy tells them apart best.'},
+ {id:'keep',type:'keep',act:1,pts:10,short:'Keep groups you can measure, reach and that are big enough: status-seeking professionals and frequent flyers.'},
+ {id:'a2',type:'act',act:2,title:'Act II · Target',kicker:'About 8 minutes',lead:'Where should Aurelle spend its money?',
+  rem:['Your research team has found three groups. You will choose <b>who to go after</b>.','Then you will plan <b>how to grow</b> in year two. Money and workshop size are limited.']},
+ {id:'tg',type:'dec',act:2,pts:12,q:'Which group will you launch to in year one?',
+  ctx:'<div class="rem"><span class="lbl">Year 1 limits</span><span>Budget <b>€500,000</b>. The workshop makes up to <b>1,200 bags</b>. Each bag earns <b>€1,500</b> before marketing. A focused campaign costs <b>€300,000</b>.</span></div>'+
+   '<div class="grid">'+SEGS.map(s=>`<div class="gcard"><b>${s.nm}</b><span>Reachable buyers: <b>${s.reach}</b></span><span>Rivals: ${s.rivals}</span><span>Fit: ${s.fit}</span></div>`).join('')+'</div>',
+  opts:SEGS.map(s=>({t:s.nm})),score:Y1.map(y=>Math.max(0,y)),pts12:true,
+  outcome:i=>M(Y1[i])+' profit',why:'Rising Achievers earn the most: moderate rivals, a strong fit, and enough buyers. Frequent Travellers is the biggest group, but rivals and fit hold it back. The biggest group is not always the best target.',short:'Year 1 target: Rising Achievers (best profit)'},
+ {id:'plan',type:'dec',act:2,pts:14,q:'Year 2 plan: what will you do?',
+  ctx:'<div class="rem"><span class="lbl">Year 2</span><span>Achievers loved the bag. Budget <b>€1,200,000</b>. The workshop now makes up to <b>3,000 bags</b>. Each extra campaign costs <b>€300,000</b>. A new design costs <b>€200,000</b>. Expected bags: Achievers 1,400, Travellers 900, Heritage Collectors 200.</span></div>',
+  opts:PLAN2.map(p=>({t:p.t})),score:PLAN2.map(p=>Math.max(0,p.profit)),
+  outcome:i=>M(PLAN2[i].profit)+' profit · '+PLAN2[i].bags.toLocaleString()+' bags',why:'The business has grown and the groups want different things. A second offer for Travellers adds profit. A third offer for Heritage Collectors costs more than it earns, and one message for everybody sells the least.',short:'Year 2: add a travel edition for Travellers only'},
+ {id:'a3',type:'act',act:3,title:'Act III · Position',kicker:'About 12 minutes',lead:'What should Aurelle stand for in customers\' minds?',
+  rem:['You will pick a <b>space on the market</b>, a <b>promise</b>, a <b>price</b> and a <b>slogan</b>.','Then you will write the one-sentence statement that guides everything.']},
+ {id:'map',type:'map',act:3,pts:12,q:'Where on the market should Aurelle Voyage sit?',short:'Map: a modern, high-end space away from every rival.'},
+ {id:'claim',type:'dec',act:3,pts:12,q:'Which promise should Aurelle lead with?',
+  ctx:'<p class="sub">Here is what we found out about each promise.</p><div class="tw"><table class="sc"><tr><th>Promise</th><th>Rivals saying it</th><th>Achievers who care</th><th>Hard to copy?</th></tr>'+CLAIMS.map(c=>`<tr><td><b>${c.t}</b></td><td>${c.riv}</td><td>${c.care}</td><td>${c.copy}</td></tr>`).join('')+'</table></div>',
+  opts:CLAIMS.map(c=>({t:c.t})),score:CLAIMS.map(c=>c.share),
+  outcome:i=>CLAIMS[i].share+' in 100 Achievers would pick Aurelle',whyEach:CLAIMS.map(c=>c.txt),why:'',short:'Lead with the promise rivals do not make and customers care about: hand-stitched in Paris, repaired free for life.'},
+ {id:'price',type:'dec',act:3,pts:12,q:'What price will you set for Aurelle Voyage?',
+  ctx:'<div class="rem"><span class="lbl">What we know</span><span>Rival prices: Valmont <b>€5,500</b>, Haute Noor <b>€6,200</b>, Orsay & Co <b>€1,100</b>, Kesto <b>€900</b>.</span><span>Achievers told us they would spend <b>€2,500 to €4,000</b> on a bag they keep for years.</span></div>',
+  opts:PRICES.map(p=>({t:p.t})),score:PRICES.map(p=>p.consider*p.lux/100),
+  outcome:i=>PRICES[i].consider+' in 100 would consider it · '+PRICES[i].lux+' in 100 say it feels like real luxury',whyEach:PRICES.map(p=>p.txt),why:'',short:'Price near what the target will pay and still feels luxury: €3,200.'},
+ {id:'slogan',type:'dec',act:3,pts:6,q:'The agency sends three slogans. Which do you approve?',
+  ctx:'',opts:SLOGANS.map(s=>({t:s.t})),score:SLOGANS.map(s=>s.pts),outcome:i=>SLOGANS[i].pts?'Approved':'Rejected',whyEach:SLOGANS.map(s=>s.txt),why:'',short:'Approve the slogan that names the point of difference and speaks to the target.'},
+ {id:'build',type:'build',act:3,pts:10,q:'Write the position statement. Pick one phrase for each part.',short:'A strong statement is specific about who, what and why.'},
+ {id:'end',type:'end',act:4}
+];
+const ACTNAMES=['','Segment','Target','Position'];
+const total=()=>Object.values(S.res).reduce((a,r)=>a+r.pts,0);
+
+/* ---------- helpers ---------- */
+function order(key,n,ok){
+ if(S.ord[key])return S.ord[key];
+ let a,t=0;
+ do{a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}t++}
+ while(ok!=null&&a.indexOf(ok)===S.lastSlot&&t<30);
+ if(ok!=null)S.lastSlot=a.indexOf(ok);
+ S.ord[key]=a;return a}
+const fmt=s=>{s=Math.max(0,Math.floor(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+const fbx=(lvl,pts,max,msg)=>`<div class="fb ${lvl===2?'ok':lvl===1?'':'bad'}"><b class="t">${lvl===2?'Great decision':lvl===1?'Decent decision':'Costly decision'} · +${pts} of ${max}</b><span>${msg}</span></div>`;
+const lvl=(p,m)=>p>=m*.85?2:p>=m*.4?1:0;
+const cont=()=>`<button class="go" data-act="cont">Continue</button>`;
+function head(n){const qs=N.filter(x=>x.act===n.act&&x.type!=='act');return `<span class="lbl">Act ${['','I','II','III'][n.act]} · ${ACTNAMES[n.act]} · Decision ${qs.indexOf(n)+1} of ${qs.length}</span>`}
+const dotsBar=v=>`<span class="ib"><i style="width:${v*10}%"></i></span>`;
+const pick=(i,r)=>r&&r.k===i;
+
+/* ---------- renderers ---------- */
+const R={};
+R.start=()=>`<div class="orn"><i></i></div><div style="display:grid;gap:10px;text-align:center"><span class="lbl">A 30-minute game</span><h1 class="disp">The Maison Launch</h1>
+ <p class="sub">You are the new brand director of a Paris luxury house. Read the evidence, make nine decisions, and see what each one does to the business.</p></div>
+ <div class="rem"><span class="lbl">How it works</span><span>Three acts: <b>Segment</b>, <b>Target</b>, <b>Position</b>.</span><span>Each decision locks and then shows its result. Your progress is saved in this browser.</span></div>
+ <div style="display:grid;gap:8px"><label class="lbl" for="team">Your name or team name</label><input id="team" class="fld" data-in="team" maxlength="40" value="${esc(S.team)}" placeholder="Write it here"></div>
+ <button class="go" data-act="begin" id="begin" ${S.team.trim()?'':'disabled'}>Begin the appointment</button>`;
+R.act=n=>`<div class="orn"><i></i></div><div style="display:grid;gap:8px"><span class="lbl">${n.kicker}</span><h2 class="disp">${n.title}</h2><p class="q" style="font-family:var(--f-disp);font-style:italic;font-size:24px">${n.lead}</p></div>
+ ${n.brief?`<p>${n.brief}</p>`:''}<div class="rem"><span class="lbl">Decisions ahead</span>${n.rem.map(r=>`<span>${r}</span>`).join('')}</div>
+ <button class="go" data-act="cont">${n.act===1?'Open the prospect list':n.act===2?'See the numbers':'Study the market'}</button>`;
+
+R.lens=n=>{
+ const r=S.res.lens,cur=r?r.k:(S.draft.lens==null?0:S.draft.lens),L=LENS[cur],gs=groupsOf(L);
+ return `${head(n)}<h2 class="disp">Split the prospects into groups</h2>
+ <p>Twelve prospects told us how interested they are in Aurelle Voyage (1 to 10). Try each way of splitting them. A good split puts <b>similar interest together</b> and <b>different interest apart</b>.</p>
+ <div class="tabs">${LENS.map((l,i)=>`<button class="tab ${i===cur?'on':''}" data-act="lv" data-k="${i}">${l.n}</button>`).join('')}</div>
+ <div class="grid">${gs.map(g=>{const xs=g.m.map(p=>p[5]);return `<div class="gcard"><b>${g.nm}</b><span class="sub">Average interest <b style="color:var(--gold-hi)">${mean(xs).toFixed(1)}</b> · lowest ${Math.min(...xs)}, highest ${Math.max(...xs)}</span>
+  ${g.m.map(p=>`<div class="mem"><span><b>${p[0]}</b>, ${p[2]}, ${p[1]}<small>${VALS[p[3]]} · ${HABITS[p[4]]}</small></span><span class="ib"><i style="width:${p[5]*10}%"></i></span><em>${p[5]}</em></div>`).join('')}</div>`}).join('')}</div>
+ ${r?`<div class="rem"><span class="lbl">Clarity of each split</span>${LENS.map((l,i)=>`<div class="br"><span>${l.n}</span><div><i style="width:${ETA[i]*100}%"></i></div><span>${Math.round(ETA[i]*100)}%</span></div>`).join('')}<span class="sub" style="font-size:13px">Clarity shows how well the groups tell buyers apart. In class: where they live is <b>geographic</b>, age is <b>demographic</b>, values are <b>psychographic</b>, buying habits are <b>behavioural</b>.</span></div>`+
+  fbx(lvl(r.pts,12),r.pts,12,`You used "${LENS[r.k].n}" (${Math.round(ETA[r.k]*100)}% clarity). The team continues with the three groups found by values: Heritage Collectors, Rising Achievers and Frequent Travellers.`)+cont()
+  :`<button class="go" data-act="lock">Use "${L.n}" to split the market</button>`}`};
+
+R.keep=n=>{
+ const r=S.res.keep,d=r?r.d:(S.draft.keep||{});const done=Object.keys(d).length===CANDS.length;
+ return `${head(n)}<h2 class="disp">Keep or drop each group</h2>
+ <p>An intern suggests five groups. Read the evidence. Keep a group only if you could <b>count it</b>, <b>reach it</b>, and it is <b>big enough</b> to pay off.</p>
+ ${CANDS.map((c,i)=>{const v=d[i];const lk=r;const ok=lk?(c[2]?v==='k':v==='d'):null;
+  return `<div class="gcard ${lk?(ok?'okc':'badc'):''}"><b>${c[0]}</b><span class="sub">${c[1]}</span>
+  <div class="seg"><button class="${v==='k'?(lk?(c[2]?'ok':'bad'):'sel'):(lk&&c[2]?'ok':'')}" data-act="kd" data-i="${i}" data-v="k"${lk?' disabled':''}>Keep</button><button class="${v==='d'?(lk?(!c[2]?'ok':'bad'):'sel'):(lk&&!c[2]?'ok':'')}" data-act="kd" data-i="${i}" data-v="d"${lk?' disabled':''}>Drop</button></div>
+  ${lk?`<span class="gl">${ok?'✓':'✗'} ${c[3]}</span>`:''}</div>`}).join('')}
+ ${r?fbx(lvl(r.pts,10),r.pts,10,'Two points for each group you handled well. In class: groups must be <b>measurable</b>, <b>accessible</b> and <b>substantial</b> to be useful segments.')+cont():`<button class="go" data-act="kgo" ${done?'':'disabled'}>Lock in my choices</button>`}`};
+
+R.dec=n=>{
+ const r=S.res[n.id],mx=Math.max(...n.score);const best=n.score.indexOf(mx);const ord=order(n.id,n.opts.length,best);
+ const ptsOf=i=>Math.round(n.pts*n.score[i]/mx);
+ return `${head(n)}<h2 class="disp">${n.q}</h2>${n.ctx||''}
+ <div class="opts">${ord.map((k,p)=>{const cl=r?(k===best?'ok':k===r.k?'bad':''):'';return `<button class="opt ${cl}" data-act="dc" data-k="${k}"${r?' disabled':''}><span class="k">${'ABCDE'[p]}</span><span><b>${esc(n.opts[k].t)}</b></span></button>`}).join('')}</div>
+ ${r?`<div class="rem"><span class="lbl">What would have happened</span>${ord.map(k=>`<div class="rs ${k===r.k?'you':''}"><span><b>${esc(n.opts[k].t)}</b>${k===r.k?' · your choice':''}${k===best?' · best':''}<small>${n.outcome(k)}${n.whyEach?' · '+n.whyEach[k]:''}</small></span><span class="ib"><i style="width:${Math.max(2,n.score[k]/mx*100)}%"></i></span></div>`).join('')}</div>`+
+  fbx(lvl(r.pts,n.pts),r.pts,n.pts,esc(n.why||(n.whyEach?n.whyEach[best]:'')))+cont():''}`};
+
+R.map=n=>{
+ const r=S.res.map,g=r?r.gap:S.draft.map;
+ return `${head(n)}<h2 class="disp">${n.q}</h2>
+ <div class="rem"><span class="lbl">What Rising Achievers told us</span><span>"Valmont is what my grandmother carries. Beautiful, but not me."</span><span>"Orsay is fun, but it feels like fast fashion. I want something I can keep for years."</span><span>"I want modern lines, but people should still see it is serious luxury."</span></div>
+ <p class="q">Tap the map to place Aurelle Voyage.</p>
+ <div class="mapwrap"><div class="cap">&uarr; Ultra-luxury</div><div class="map ${r?'lk':''}" data-map="1" role="img" aria-label="Map of four rival brands. Tap to place Aurelle Voyage.">
+ ${r?`<div class="zone" style="left:${ZONE.x1}%;top:${100-ZONE.y2}%;width:${ZONE.x2-ZONE.x1}%;height:${ZONE.y2-ZONE.y1}%">Target zone</div>`:''}
+ ${RIVALS.map(v=>`<span class="dot" style="left:${v[1]}%;top:${100-v[2]}%;transform:translate(${v[1]<20?'0':v[1]>80?'-100%':'-50%'},-50%)">${v[0]}</span>`).join('')}
+ ${g?`<span class="me" style="left:${g.x}%;top:${100-g.y}%">Aurelle</span>`:''}</div>
+ <div class="xcap"><span>&larr; Classic</span><span>Modern &rarr;</span></div><div class="cap">&darr; Accessible luxury</div></div>
+ ${r?fbx(lvl(r.pts,12),r.pts,12,esc(r.msg))+cont():`<button class="go" data-act="mapgo" ${g?'':'disabled'}>Place my brand here</button>`}`};
+
+function stmtHTML(sel,full){const p=STMT.map((b,i)=>{const k=sel[i];return k==null?'<span class="e">['+b.lbl.replace('?','').toLowerCase()+']</span>':'<b>'+esc(b.opts[full?b.ok:k])+'</b>'});
+ return `To ${p[0]}, ${STMT[1].pre}${p[1]} ${STMT[2].pre}${p[2]}.`}
+R.build=n=>{
+ const r=S.res.build,d=S.draft.build||[null,null,null],sel=r?r.sel:d;
+ return `${head(n)}<h2 class="disp">${n.q}</h2><div class="stmt">${stmtHTML(sel)}</div>
+ ${STMT.map((b,i)=>{const ord=order('bl'+i,3,b.ok);return `<div class="blank"><span class="lbl">${b.lbl}</span><div class="opts">${ord.map((k,p)=>{const cl=r?(k===b.ok?'ok':k===sel[i]?'bad':''):(sel[i]===k?'sel':'');
+  return `<button class="opt ${cl}" data-act="bl" data-b="${i}" data-k="${k}"${r?' disabled':''}><span class="k">${'ABC'[p]}</span><span><b>${esc(b.opts[k])}</b></span></button>`}).join('')}</div></div>`}).join('')}
+ ${r?fbx(lvl(r.pts,10),r.pts,10,STMT.map((b,i)=>(r.sel[i]===b.ok?'✓ ':'✗ ')+esc(b.why)).join('<br>'))+`<div class="stmt"><span class="lbl" style="display:block;font-style:normal;margin-bottom:4px">The strongest version</span>${stmtHTML([0,0,0],true)}</div>`+cont():`<button class="go" data-act="bgo" ${sel.every(x=>x!=null)?'':'disabled'}>Lock in my statement</button>`}`};
+
+R.end=()=>{
+ const t=total(),T=t>=90?'Maison Director':t>=75?'Brand Strategist':t>=55?'Atelier Apprentice':'Back to the Showroom';
+ const line=t>=90?'The client signs the contract today.':t>=75?'The client is impressed and asks for a second meeting.':t>=55?'A promising start. The client wants to see a few ideas again.':'The client asks you to revisit the basics. Read the review below.';
+ const acts=[1,2,3].map(a=>{const ids=N.filter(n=>n.act===a&&n.pts);return [ACTNAMES[a],ids.reduce((s,n)=>s+(S.res[n.id]?S.res[n.id].pts:0),0),ids.reduce((s,n)=>s+n.pts,0)]});
+ const miss=N.filter(n=>n.pts&&S.res[n.id]&&S.res[n.id].pts<n.pts*.85);
+ return `<div class="orn"><i></i></div><div style="display:grid;gap:8px;text-align:center"><span class="lbl">Appointment complete · ${esc(S.team)}</span><h1 class="disp">${T}</h1><p class="sub">${line}</p></div>
+ <div style="text-align:center"><div class="big">${t}<small>/ 100</small></div></div>
+ <div class="bars">${acts.map(a=>`<div class="br"><span>${a[0]}</span><div><i style="width:${a[1]/a[2]*100}%"></i></div><span>${a[1]}/${a[2]}</span></div>`).join('')}</div>
+ <div class="stmt"><span class="lbl" style="display:block;font-style:normal;margin-bottom:4px">Aurelle Voyage position statement</span>${stmtHTML([0,0,0],true)}</div>
+ <div class="rv"><span class="lbl">${miss.length?'Where a better decision was available':'Every decision was a strong one'}</span>${miss.length?miss.map(n=>`<p>${esc(n.short)}</p>`).join(''):'<p>The data pointed one way and you followed it every time.</p>'}</div>
+ <div class="row"><button class="ghost" data-act="copy" id="copyb">Copy my result</button></div>
+ <p class="sub" style="font-size:13px">Show this screen to your instructor. Your decisions are saved and cannot be changed.</p>`};
+
+/* ---------- engine ---------- */
+function render(){
+ const n=N[S.i];
+ const hd=S.i>0?`<div class="top"><div class="bar"><span class="mark">Maison Launch</span><span class="stats"><span>Prestige<b>${total()}</b></span><span id="tm"></span></span></div>
+  <div class="prog"><i style="width:${S.i/(N.length-1)*100}%"></i></div><div class="acts">${[1,2,3].map(a=>`<span class="${n.act===a?'on':''}">${['I','II','III'][a-1]} ${ACTNAMES[a]}</span>`).join('')}</div></div>`:'<div style="height:16px"></div>';
+ $('#app').innerHTML=hd+`<main class="card">${S.restored&&!S.sawBack?'<div class="notice">Welcome back. Your saved decisions are here and locked.</div>':''}${R[n.type](n)}</main>`;
+ S.sawBack=true;tick();save()}
+function tick(){const e=$('#tm');if(!e||!S.t0)return;const left=LIMIT-(Date.now()-S.t0)/1000;e.textContent=left>=0?fmt(left)+' left':'+'+fmt(-left)+' over';e.style.color=left<300?'var(--gold-hi)':''}
+setInterval(tick,1000);
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+function rerender(){const y=window.scrollY;render();window.scrollTo(0,y)}
+function toFb(){const f=$('.fb');if(f)f.scrollIntoView({block:'center',behavior:'smooth'})}
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset&&t.dataset.in==='team'){S.team=t.value;const b=$('#begin');if(b)b.disabled=!S.team.trim();save()}});
+document.addEventListener('click',e=>{
+ const n=N[S.i];
+ const m=e.target.closest('[data-map]');
+ if(m){if(S.res.map)return;const r=m.getBoundingClientRect();S.draft.map={x:Math.round(Math.min(97,Math.max(3,(e.clientX-r.left)/r.width*100))),y:Math.round(Math.min(97,Math.max(3,100-(e.clientY-r.top)/r.height*100)))};rerender();return}
+ const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const a=b.dataset.act,d=b.dataset;
+ if(a==='begin'){if(!S.team.trim())return;S.t0=Date.now();S.i=1;render();window.scrollTo(0,0);return}
+ if(a==='cont'){if(S.i<N.length-1){S.i++;render();window.scrollTo(0,0)}return}
+ if(a==='lv'){if(S.res.lens)return;S.draft.lens=+d.k;rerender();return}
+ if(a==='lock'){if(S.res.lens)return;const k=S.draft.lens==null?0:S.draft.lens;S.res.lens={k,pts:lensPts(k)};render();toFb();return}
+ if(a==='kd'){if(S.res.keep)return;S.draft.keep=Object.assign({},S.draft.keep,{[d.i]:d.v});rerender();return}
+ if(a==='kgo'){const dr=S.draft.keep||{};if(S.res.keep||Object.keys(dr).length<CANDS.length)return;let p=0;CANDS.forEach((c,i)=>{if(c[2]?dr[i]==='k':dr[i]==='d')p+=2});S.res.keep={pts:p,d:dr};render();toFb();return}
+ if(a==='dc'){if(S.res[n.id])return;const k=+d.k,mx=Math.max(...n.score);S.res[n.id]={k,pts:Math.round(n.pts*n.score[k]/mx)};render();toFb();return}
+ if(a==='mapgo'){const g=S.draft.map;if(!g||S.res.map)return;
+  const dm=Math.min(...RIVALS.map(v=>dist(g,{x:v[1],y:v[2]})));const inz=g.x>=ZONE.x1&&g.y>=ZONE.y1;const near=RIVALS.reduce((a2,v)=>dist(g,{x:v[1],y:v[2]})<dist(g,{x:a2[1],y:a2[2]})?v:a2,RIVALS[0]);
+  let pts,msg;
+  if(inz&&dm>=25){pts=12;msg='A clear gap that is modern and high-end, far from every rival. It matches what Achievers asked for: not Valmont\'s old-fashioned feel, not Orsay\'s fast-fashion feel.'}
+  else if(inz){pts=6;msg='Right area, but too close to '+near[0]+'. Move further away so customers can tell you apart.'}
+  else if(dm>=25){pts=3;msg='The space is empty, but it is not what your target asked for. An empty space is only an opportunity if customers want it.'}
+  else{pts=0;msg='This spot is next to '+near[0]+' and away from what your target wants. A me-too brand gives customers nothing to choose.'}
+  S.res.map={pts,gap:g,msg};render();toFb();return}
+ if(a==='bl'){if(S.res.build)return;const cur=(S.draft.build||[null,null,null]).slice();cur[+d.b]=+d.k;S.draft.build=cur;rerender();return}
+ if(a==='bgo'){const sel=S.draft.build||[];if(sel.length<3||sel.some(x=>x==null)||S.res.build)return;S.res.build={pts:sel.reduce((s,k,i)=>s+(k===STMT[i].ok?STMT[i].pts:0),0),sel};render();toFb();return}
+ if(a==='copy'){const t=`THE MAISON LAUNCH: ${S.team}\nPrestige score: ${total()} / 100\n\n${stmtHTML([0,0,0],true).replace(/<[^>]+>/g,'')}`;const sel=()=>{const r=document.createRange();r.selectNodeContents($('.stmt'));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selected. Press copy.'};try{navigator.clipboard.writeText(t).then(()=>{b.textContent='Copied'},sel)}catch(_){sel()}return}
+});
+render();
+</script>
+</body></html>
